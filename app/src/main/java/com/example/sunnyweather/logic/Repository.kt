@@ -23,6 +23,7 @@ object Repository {
         } catch (e:Exception) {
             Result.failure<List<Place>>(e)
         }
+        //发射结果数据
         emit(result)
     }
 }
