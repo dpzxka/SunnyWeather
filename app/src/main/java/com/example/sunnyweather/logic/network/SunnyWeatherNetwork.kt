@@ -9,6 +9,7 @@ import java.lang.RuntimeException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.ln
 
 /*统一的网络数据源访问入口，对所有网络请求API封装*/
 object SunnyWeatherNetwork {
@@ -17,6 +18,12 @@ object SunnyWeatherNetwork {
     /* 动态接口代理方式二：   private val placeService = ServiceCreator.create(PlaceService::class.java)*/
 
     suspend fun searchPlaces(query:String) = placeService.searchPlaces(query).await()
+
+    /*新增对WeatherService接口封装*/
+
+    private val weatherService = ServiceCreator.create<WeatherService>()
+    suspend fun getDailyWeather(lng:String,lat:String) = weatherService.getDailyWeather(lng,lat).await()
+    suspend fun getRealtimeWeather(lng:String,lat:String) = weatherService.getRealtimeWeather(lng,lat).await()
 
     /*call定义为挂起函数，*/
     private suspend fun <T> Call<T>.await():T {
