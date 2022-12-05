@@ -56,7 +56,29 @@ class WeatherActivity : AppCompatActivity() {
             }
         })
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+        /*刷新天气*/
+        viewModel.weatherLiveData.observe(this, Observer { result ->
+            val weather = result.getOrNull()
+            if (weather != null) {
+                showWeatherInfo(weather)
+            } else {
+                Toast.makeText(this, "无法成功获取天气信息", Toast.LENGTH_SHORT).show()
+                result.exceptionOrNull()?.printStackTrace()
+            }
+            binding.swipeRefresh.isRefreshing = false
+        })
+            binding.swipeRefresh.setColorSchemeResources(R.color.design_default_color_primary)
+            refreshWeather()
+            binding.swipeRefresh.setOnRefreshListener {
+                refreshWeather()
+            }
     }
+
+    fun refreshWeather() {
+        viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+        binding.swipeRefresh.isRefreshing = true
+    }
+
     private fun showWeatherInfo(weather: Weather) {
         binding.nowT.placeName.text = viewModel.placeName
         val realtime = weather.realtime
